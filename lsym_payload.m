@@ -1,6 +1,7 @@
 #import "lsym.h"
 #import "lsym_gadgets.h"
 static uint64_t corrupt_ptr = 0;
+static uint64_t cr4_save = 0;
 
 static void cleanup() {
     if (corrupt_ptr) {
