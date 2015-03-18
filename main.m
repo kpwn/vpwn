@@ -106,7 +106,7 @@ int main(int argc, const char * argv[]) {
     printf("[i] Preparing payload...\n");
 
     lsym_map_t* mapping_kernel = lsym_map_file("/mach_kernel");
-    if (!mapping_kernel->map) {
+    if (!mapping_kernel) {
         mapping_kernel = lsym_map_file("/System/Library/Kernels/kernel");
     }
 

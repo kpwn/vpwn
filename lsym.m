@@ -44,6 +44,7 @@ lsym_kern_pointer_t kext_pointer(const char* identifier){
 
 lsym_map_t *lsym_map_file(const char *path) {
     int fd=open(path, O_RDONLY);
+    if(fd==-1) return 0;
     struct stat sb;
     fstat(fd, &sb);
     void* map = mmap(NULL, sb.st_size  & 0xFFFFFFFF, PROT_READ, MAP_SHARED, fd, 0);
