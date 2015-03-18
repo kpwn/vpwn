@@ -54,6 +54,7 @@ lsym_map_t *lsym_map_file(const char *path) {
     return ret;
 }
 
+
 lsym_kern_pointer_t lsym_find_gadget(lsym_map_t *mapping, const char *bytes, const uint32_t size, const lsym_gadget_flags flags) {
     lsym_offset_t off=(lsym_offset_t)memmem(mapping->map, mapping->sz, bytes, size);
     if (!off) {

