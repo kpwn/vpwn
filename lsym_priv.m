@@ -46,7 +46,7 @@ char lsym_heap_overflow(char* data, size_t size) {
     
     if (service == IO_OBJECT_NULL) return 0;
 
-    err = IOServiceOpen(service, mach_task_self(), /* IOHIDSecurePromptClient */ 0x48535042, &conn);
+    err = IOServiceOpen(service, mach_task_self(), /* IOHIDSecurePromptClient */ 0x48535043, &conn);
     
     if (err != KERN_SUCCESS) return 0;
     
@@ -73,4 +73,3 @@ char lsym_heap_overflow(char* data, size_t size) {
 uint64_t lsym_heap_overflow_bufsize() {
     return 512;
 }
-

@@ -8,7 +8,8 @@
     returns kernel base on the local system
  */
 uint64_t lsym_find_base();
-#define FIND_KERNEL_SLIDE lsym_find_base()
+#define FIND_KERNEL_SLIDE 0
+//lsym_find_base()
 
 /*
     data: data to write past heap boundaries

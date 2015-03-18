@@ -44,7 +44,7 @@ lsym_kern_pointer_t kext_pointer(const char* identifier){
 
 lsym_map_t *lsym_map_file(const char *path) {
     int fd=open(path, O_RDONLY);
-    if(fd==-1) return 0;
+if(fd < 0) return 0;
     struct stat sb;
     fstat(fd, &sb);
     void* map = mmap(NULL, sb.st_size  & 0xFFFFFFFF, PROT_READ, MAP_SHARED, fd, 0);
@@ -54,7 +54,6 @@ lsym_map_t *lsym_map_file(const char *path) {
     ret->sz = sb.st_size & 0xFFFFFFFF;
     return ret;
 }
-
 
 lsym_kern_pointer_t lsym_find_gadget(lsym_map_t *mapping, const char *bytes, const uint32_t size, const lsym_gadget_flags flags) {
     lsym_offset_t off=(lsym_offset_t)memmem(mapping->map, mapping->sz, bytes, size);
